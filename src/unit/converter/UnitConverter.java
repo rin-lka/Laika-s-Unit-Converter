@@ -1,8 +1,18 @@
 
 package unit.converter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Scanner;
 import java.util.TimeZone;
+import java.util.Calendar;
 import java.util.Currency;
+import java.util.GregorianCalendar;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 
 public class UnitConverter {
@@ -10,11 +20,20 @@ public class UnitConverter {
     public static double roundTo(double sum) {
     return ((long) (sum < 0 ? sum * 100 - 0.5 : sum * 100 + 0.5)) / 100.0;
 }
+    private static final String DATE_FORMAT = "hh:mm:ss a";
+    
     public static void main(String[] args) {
         Scanner reader = new Scanner(System.in);
         
-        System.out.println("!!Currently Only SPEED working!!");
-        System.out.println("Welcome to the Unit Converter!");
+        Calendar calendar = new GregorianCalendar();
+        TimeZone userLocal = TimeZone.getDefault();
+        
+        System.out.println("Welcome to the Unit Converter, Now supporting time!");
+        System.out.println("It's currently: " + calendar.getTime());
+        System.out.println("----------------------------------------");
+        System.out.println("Supported timezone inputs are identical to java.util.TimeZone.");
+        System.out.println("Timezone conversion also appears to be one hour out.");
+        System.out.println("----------------------------------------");
         System.out.println("What would you like to convert?");
         System.out.println("Distance - Time Zone - Speed - Weight");
         
@@ -247,6 +266,36 @@ public class UnitConverter {
                 } 
                 } break;
     }
+    } else if (userIn.equals("time zone") || (userIn.equals("time") || (userIn.equals("timezone")))){
+            System.out.println("Please enter your start time, including zone, in 24 hour format. eg: ##:##:## GMT");
+            String userTime = reader.nextLine().toUpperCase();
+            String userStartT1 = userTime.replaceAll("[A-Z]", "");
+            String userStartT2 = userStartT1.replaceAll("[ ]", "");
+            String userTimeZone = userTime.replaceAll("[0-9]", "");
+            String userTimeR1 = userTimeZone.replaceAll(" ", "");
+            String userTimeR2 = userTimeR1.replaceAll(":", "");
+            
+            System.out.println("Please enter your target timezone...");
+            String userTarget = reader.nextLine().toUpperCase();
+    
+            SimpleDateFormat userDateFormat = new SimpleDateFormat("HH:mm:ss");
+            userDateFormat.setTimeZone(TimeZone.getTimeZone(userTimeR2));
+            
+            SimpleDateFormat userTargetFormat = new SimpleDateFormat("HH:mm:ss");
+            userTargetFormat.setTimeZone(TimeZone.getTimeZone(userTarget));
+            
+            Date userInDate = null;
+                    try {
+                        userInDate = userDateFormat.parse(userStartT2);
+                    } catch (ParseException e) {e.printStackTrace();}
+                    
+                    System.out.println("Your start time " + userDateFormat.format(userInDate) + " " + userTimeR2);
+                    System.out.println("Converts to " + userTargetFormat.format(userInDate) + " " + userTarget);
+
+//            Calendar userCal = new GregorianCalendar(TimeZone.getTimeZone(userTimeR2));
+//            userCal.setTime(userInDate);
+
+
     } break;
     }
     }
